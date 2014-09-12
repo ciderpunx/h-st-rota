@@ -39,7 +39,7 @@ feedAuthor = do
 
 entryLink :: IO Link
 entryLink = do
-   return (Link { linkHref = "http://twitter.com/rotabott"
+   return (Link { linkHref = "https://twitter.com/rotabott"
                 , linkRel = Nothing
                 , linkType = Nothing
                 , linkHrefLang = Nothing
