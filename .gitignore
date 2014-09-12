@@ -3,3 +3,5 @@
 *.o
 RotaPrivateData.hs
 rota_lastrun
+rota
+rota_feed
