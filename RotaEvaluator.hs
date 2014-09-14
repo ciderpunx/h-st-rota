@@ -30,14 +30,16 @@ getCmds = do
 
 getAST xs = 
     case runP xs of
-      Right cmd -> cmd
-      Left fail -> Command (User "rotabott") (BadStatus "Parse Error") (Err (packStr fail))
+      Right (_:(User u):StatusTD:(Job j):_) -> Command (User u) StatusTD (Job j)
+      Right (_:(User u):StatusDone:(Job j):_) -> Command (User u) StatusDone (Job j)
+      Right (ts) -> Command (User "rotabott") (BadStatus "Parse error, missing tokens or bad order") (Err (packStr $ show ts)) 
+      Left fail  -> Command (User "rotabott") (BadStatus "Parse error, noparse") (Err (packStr fail))
 
-eval (Command user status job) = 
+eval (_:status:user:job:rest)= 
   case status of 
     StatusTD -> todo user job
     StatusDone -> finished user job
-    (BadStatus s) -> error (bsToStr s) -- user job
+    (BadStatus s) -> error (bsToStr s) user job
 
 strCat :: [Bst] -> Bst
 strCat = foldr B.append ""

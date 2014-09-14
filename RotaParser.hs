@@ -33,39 +33,43 @@ validUsers = ["rotabott","ciderpunx","elnornor","pseyclipse"]
 
 parseUser :: Parser Tok
 parseUser = do 
-     u <- string "@" *> takeTill (==' ')
+     u <- takeTill (==' ')
+     _ <- char ' '
      if any (==u) validUsers
       then return $ User u
       else return $ BadUser u
 
 parseStatus :: Parser Tok
 parseStatus = do
-    s <- string "#" *> takeTill (==' ')
+    s <- takeTill (==' ')
+    _ <- char ' '
     case C.map toLower s of 
-      "todo" -> return $ StatusTD
-      "done" -> return $ StatusDone
+      "todo"  -> return $ StatusTD
+      "done"  -> return $ StatusDone
       _       -> return $ BadStatus s
 
 parseJob :: Parser Tok
 parseJob = do
-    quote
     j <- takeTill quotey
     quote
     return $ Job j
 
 parseIgn :: Parser Tok
 parseIgn = do 
-  takeTill (\c -> c == '#' || c=='@' || quotey c )
+  takeTill (== ' ')
   return E
 
+parseTok :: Parser Tok
+parseTok = do
+    tokId <- anyChar
+    case tokId of
+      '@'   -> parseUser
+      '#'   -> parseStatus
+      '\''  -> parseJob
+      '"'   -> parseJob
+      otherwise     -> parseIgn
+
 parseTweet = do 
-  parseIgn
-  _ <- parseUser -- i.e. rotabott/me
-  parseIgn
-  them <- parseUser
-  parseIgn
-  status <- parseStatus
-  parseIgn
-  job <- parseJob
-  parseIgn
-  return $ Command them status job
+  tokens <- many1 parseTok
+  return tokens
+  -- return $ Command them status job
