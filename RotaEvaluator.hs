@@ -31,21 +31,21 @@ getCmds = do
 getAST xs = 
     case runP xs of
       Right cmd -> cmd
-      Left fail -> Command (U (User "rotabott")) (S (BadStatus "Parse Error")) (Err (packStr fail))
+      Left fail -> Command (User "rotabott") (BadStatus "Parse Error") (Err (packStr fail))
 
 eval (Command user status job) = 
   case status of 
-    S TD -> todo user job
-    S Finished -> finished user job
-    S (BadStatus s) -> error (bsToStr s) -- user job
+    StatusTD -> todo user job
+    StatusDone -> finished user job
+    (BadStatus s) -> error (bsToStr s) -- user job
 
 strCat :: [Bst] -> Bst
 strCat = foldr B.append ""
 
 todo, finished :: Tok -> Tok -> Bst
-todo (U (User user)) (J (Job job)) = strCat ["@",user," don't forget to: '",job,"' #todo"]
+todo (User user) (Job job) = strCat ["@",user," don't forget to: '",job,"' #todo"]
 
-finished (U (User user)) (J (Job job)) = strCat ["@",user, " just finished doing: '", job, "' #done"]
+finished (User user) (Job job) = strCat ["@",user, " just finished doing: '", job, "' #done"]
 
 -- cf: http://stackoverflow.com/questions/3232074/what-is-the-best-way-to-convert-string-to-bytestring
 packStr :: String -> Bst

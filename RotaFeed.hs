@@ -73,11 +73,11 @@ makeFeed = do
 makeTweetFromCmd :: Command -> IO String
 makeTweetFromCmd c = 
   case c of
-    Command (U (User u)) (S TD) (J (Job j)) -> 
+    Command (User u) StatusTD (Job j) -> 
             return . bsToStr $ strCat ["@",u,": don't forget to ", j, " #todo"]
-    Command (U (User u)) (S Finished) (J (Job j)) ->
+    Command (User u) StatusDone (Job j) ->
             return . bsToStr $ strCat ["Yay! @", u, " just finished ", j, " #done"]
-    Command (U (User u)) (S (BadStatus s)) (Err e) ->
+    Command (User u) (BadStatus s) (Err e) ->
             return . bsToStr $ strCat ["Uh-oh. Rota Bot encountered an #error -- ", s
                                       , ":", e, " -- in a message from @", u, ". Better investigate, @ciderpunx"
                                       ]

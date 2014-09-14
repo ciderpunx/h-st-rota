@@ -7,23 +7,15 @@ import Data.Attoparsec.Char8
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as C
 
-data Tok    = U User 
-            | S Status
-            | J Job
-            | E 
-            | Err Bst
-        deriving Show
-
-data User   = User Bst
+data Tok    = User Bst
             | BadUser Bst
-        deriving Show
-
-data Status = TD
-            | Finished
+            | StatusTD
+            | StatusDone
             | BadStatus Bst
-        deriving Show
-
-data Job     = Job Bst deriving Show
+            | Job Bst
+            | E
+            | Err Bst
+        deriving (Show,Eq,Ord)
 
 data Command = Command Tok Tok Tok deriving Show
 
@@ -43,23 +35,23 @@ parseUser :: Parser Tok
 parseUser = do 
      u <- string "@" *> takeTill (==' ')
      if any (==u) validUsers
-      then return $ U (User u)
-      else return $ U (BadUser u)
+      then return $ User u
+      else return $ BadUser u
 
 parseStatus :: Parser Tok
 parseStatus = do
     s <- string "#" *> takeTill (==' ')
     case C.map toLower s of 
-      "todo" -> return $ S TD
-      "done" -> return $ S Finished
-      _       -> return $ S (BadStatus s)
+      "todo" -> return $ StatusTD
+      "done" -> return $ StatusDone
+      _       -> return $ BadStatus s
 
 parseJob :: Parser Tok
 parseJob = do
     quote
     j <- takeTill quotey
     quote
-    return $ J (Job j)
+    return $ Job j
 
 parseIgn :: Parser Tok
 parseIgn = do 
