@@ -12,9 +12,6 @@ import Text.Feed.Util
 import Text.XML.Light.Output
 import qualified Data.ByteString as B
 
---main :: IO ()
---main = (feed entries) >>= putStr
-
 feed = do
   f <- makeFeed
   return . ppTopElement $ xmlFeed f
@@ -74,12 +71,12 @@ makeTweetFromCmd :: Command -> IO String
 makeTweetFromCmd c = 
   case c of
     Command (User u) StatusTD (Job j) -> 
-            return . bsToStr $ strCat ["@",u,": don't forget to ", j, " #todo"]
+            return . bsToStr $ strCat ["@",u,": don't forget #todo ", j, "!"]
     Command (User u) StatusDone (Job j) ->
             return . bsToStr $ strCat ["Yay! @", u, " just finished ", j, " #done"]
-    Command (User u) (BadStatus s) (Err e) ->
-            return . bsToStr $ strCat ["Uh-oh. Rota Bot encountered an #error -- ", s
-                                      , ":", e, " -- in a message from @", u, ". Better investigate, @ciderpunx"
+    Err e ->
+            return . bsToStr $ strCat ["@", adminUser," @", selfUser, " encountered an #error: ", e
+                                      , " -- better investigate"
                                       ]
     _ -> return $ "Oh dear, @rotabott hit a very strange error. Better investigate, @ciderpunx"
 
