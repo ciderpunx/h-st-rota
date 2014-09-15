@@ -2,11 +2,14 @@
 module RotaTweet where
 
 import RotaPrivateData
+import RotaEvaluator
+import RotaParser
+
 import Data.ByteString (ByteString)
 import Web.Authenticate.OAuth
 import Network.HTTP.Conduit
 import Data.Aeson
-import Data.Text (Text, pack)
+import Data.Text (Text, pack, unpack)
 import GHC.Generics
 import System.IO
 
@@ -38,7 +41,6 @@ getLatestMentions :: IO [Tweet]
 getLatestMentions = do 
   inh <- openFile "rota_lastrun" ReadMode
   sId <- hGetContents inh
-  -- putStrLn sId
   let sinceId = (read sId)::Integer
   ts <- mentions sinceId
   hClose inh
@@ -46,7 +48,13 @@ getLatestMentions = do
     Left err  -> return []
     Right ts  -> if null ts
                   then return []
-                  else do outh <- openFile "rota_lastrun" WriteMode
-                          hPutStrLn outh (show . RotaTweet.id $ head ts)
-                          hClose outh
+                  else do -- outh <- openFile "rota_lastrun" WriteMode
+                          -- hPutStrLn outh (show . RotaTweet.id $ head ts)
+                          -- hClose outh
                           return $ filter (\t -> (screen_name $ user t) /= pack "rotabott") ts 
+
+getCmds :: IO [Command]
+getCmds = do
+    ts <- getLatestMentions
+    ts' <- mapM (\t -> return . toAST . packStr . unpack $ text t) ts 
+    return ts'

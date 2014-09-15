@@ -2,7 +2,6 @@
 module RotaEvaluator where
 
 import RotaParser
-import RotaTweet
 
 import Data.Attoparsec.Char8
 import Data.Char 
@@ -45,13 +44,6 @@ toBst c = case c of
         -> case status of 
               StatusTD -> todo u j
               StatusDone -> finished u j
-
--- used in RotaFeed to make entries
-getCmds :: IO [Command]
-getCmds = do
-    ts <- getLatestMentions
-    ts' <- mapM (\t -> return . toAST . packStr . T.unpack $ text t) ts 
-    return ts'
 
 todo, finished :: Tok -> Tok -> Bst
 todo (User user) (Job job) = strCat ["@",user," don't forget to: '",job,"' #todo"]

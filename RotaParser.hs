@@ -2,7 +2,7 @@
 module RotaParser where
 
 import Control.Applicative ((*>))
-import Data.Char
+import Data.Char (isAlpha, toLower)
 import Data.List (sort)
 import Data.Attoparsec.Char8
 import qualified Data.ByteString as B
@@ -32,24 +32,28 @@ quote :: Parser Char
 quote = satisfy quotey
 
 identifier = do 
-    s <- takeTill (==' ')
+    s <- takeWhile1 (\c -> isAlpha c || isDigit c || c=='_')
     skipSpace
     return s
 
 validUsers :: [Bst]
-validUsers = ["ciderpunx","elnornor","pseyclipse"]
+validUsers = ["ciderpunx","elnornor","psyeclipse"]
 
 selfUser :: Bst
 selfUser = "rotabott"
 
+adminUser :: Bst
+adminUser = "ciderpunx"
+
 parseUser :: Parser Tok
 parseUser = do 
      u <- identifier
-     if any (==u) validUsers
-      then return $ User u
+     let lcU = C.map toLower u
+     if any (==lcU) validUsers
+      then return $ User lcU
       else if (u==selfUser) 
       then return SelfUser
-      else return $ BadUser u
+      else return $ BadUser lcU
 
 parseStatus :: Parser Tok
 parseStatus = do
