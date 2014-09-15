@@ -10,44 +10,59 @@ import Data.Text.Encoding (encodeUtf8)
 import qualified Data.ByteString as B
 import qualified Data.Text as T
 
-cliEval xs = 
-  case runP xs of
-    Right cmd -> eval cmd
-    Left fail -> "Couldn't parse tweet"
-    
-runP = parseOnly parseTweet 
+-- We evaluate in 2 stages because sometimes having the AST available is
+-- useful, eg in building feeds
+eval :: Bst -> Bst
+eval = toBst . toAST
 
-tweetStrings = do 
-    ts <- getLatestMentions
-    ts' <- mapM (\t -> return . cliEval . packStr . T.unpack $ text t) ts 
-    return ts'
+toAST :: Bst -> Command
+toAST str = do
+    case ts of
+      Right (SelfUser:(User u):StatusTD:(Job j):[])
+        -> Command (User u) StatusTD (Job j)
+      Right (SelfUser:(User u):StatusDone:(Job j):[])
+        -> Command (User u) StatusDone (Job j)
+      Right (SelfUser:_:(BadStatus b):_)
+        -> Err $ strCat ["Unknown status: ", b]
+      Right (SelfUser:(BadUser u):_:_)
+        -> Err $ strCat ["Unknown user: ", u]
+      Right ((User u):_:_:_)
+        -> Err $ strCat ["No mention of self, first user seen: ", u]
+      Right ((BadUser u):_:_:_)
+        -> Err $ strCat ["No mention of self, in addition first user seen was unknown user: ", u]
+      Right (ts) 
+        -> Err $ strCat ["Syntax error, from tokens: ", (packStr $ show ts)]
+      Left fail  
+        -> Err $ strCat ["Parse error, noparse",(packStr fail)]
+  where
+    ts = runP str
+
+toBst :: Command -> Bst
+toBst c = case c of
+    Err e 
+        -> e
+    (Command u@(User _) status j@(Job _)) 
+        -> case status of 
+              StatusTD -> todo u j
+              StatusDone -> finished u j
 
 -- used in RotaFeed to make entries
+getCmds :: IO [Command]
 getCmds = do
     ts <- getLatestMentions
-    ts' <- mapM (\t -> return . getAST . packStr . T.unpack $ text t) ts 
+    ts' <- mapM (\t -> return . toAST . packStr . T.unpack $ text t) ts 
     return ts'
-
-getAST xs = 
-    case runP xs of
-      Right (_:(User u):StatusTD:(Job j):_) -> Command (User u) StatusTD (Job j)
-      Right (_:(User u):StatusDone:(Job j):_) -> Command (User u) StatusDone (Job j)
-      Right (ts) -> Command (User "rotabott") (BadStatus "Parse error, missing tokens or bad order") (Err (packStr $ show ts)) 
-      Left fail  -> Command (User "rotabott") (BadStatus "Parse error, noparse") (Err (packStr fail))
-
-eval (_:status:user:job:rest)= 
-  case status of 
-    StatusTD -> todo user job
-    StatusDone -> finished user job
-    (BadStatus s) -> error (bsToStr s) user job
-
-strCat :: [Bst] -> Bst
-strCat = foldr B.append ""
 
 todo, finished :: Tok -> Tok -> Bst
 todo (User user) (Job job) = strCat ["@",user," don't forget to: '",job,"' #todo"]
 
 finished (User user) (Job job) = strCat ["@",user, " just finished doing: '", job, "' #done"]
+
+--------------------------------------------------------------------------------
+-- Library functions, mostly for converting between Text, String and Bst types 
+--------------------------------------------------------------------------------
+strCat :: [Bst] -> Bst
+strCat = foldr B.append ""
 
 -- cf: http://stackoverflow.com/questions/3232074/what-is-the-best-way-to-convert-string-to-bytestring
 packStr :: String -> Bst
