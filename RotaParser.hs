@@ -51,7 +51,7 @@ parseUser = do
      let lcU = C.map toLower u
      if any (==lcU) validUsers
       then return $ User lcU
-      else if (u==selfUser) 
+      else if (lcU==selfUser) 
       then return SelfUser
       else return $ BadUser lcU
 
