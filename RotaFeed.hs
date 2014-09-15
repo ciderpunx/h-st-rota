@@ -3,6 +3,7 @@ module RotaFeed where
 
 import RotaEvaluator
 import RotaParser
+import RotaTweet
 
 import System.Time
 import Text.Atom.Feed
@@ -84,7 +85,6 @@ entries = do
   cmds <- getCmds
   es <- mapM (tweetEntry . makeTweetFromCmd) cmds
   return es
-
 
 tweetEntry :: IO String -> IO Entry
 tweetEntry t = do

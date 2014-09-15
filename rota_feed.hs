@@ -1,8 +1,8 @@
 import RotaFeed
+import RotaPrivateData
+
 import Data.List
 import System.IO
-
-atomFile = "../www/rota.atom"
 
 main :: IO ()
 main = do 
