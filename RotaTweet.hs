@@ -5,6 +5,8 @@ import RotaPrivateData
 import RotaEvaluator
 import RotaParser
 
+import Network.HTTP.Types.Status
+import Control.Exception.Base
 import Data.ByteString (ByteString)
 import Web.Authenticate.OAuth
 import Network.HTTP.Conduit
@@ -48,9 +50,9 @@ getLatestMentions = do
     Left err  -> return []
     Right ts  -> if null ts
                   then return []
-                  else do -- outh <- openFile "rota_lastrun" WriteMode
-                          -- hPutStrLn outh (show . RotaTweet.id $ head ts)
-                          -- hClose outh
+                  else do outh <- openFile "rota_lastrun" WriteMode
+                          hPutStrLn outh (show . RotaTweet.id $ head ts)
+                          hClose outh
                           return $ filter (\t -> (screen_name $ user t) /= pack "rotabott") ts 
 
 getCmds :: IO [Command]
@@ -58,3 +60,25 @@ getCmds = do
     ts <- getLatestMentions
     ts' <- mapM (\t -> return . toAST . packStr . unpack $ text t) ts 
     return ts'
+
+sendTweet :: Bst -> IO (Either String Bst)
+sendTweet x = do 
+    req <- parseUrl $ "https://api.twitter.com/1.1/statuses/update.json" 
+    let req' = req {checkStatus = checkStatus'}
+        postReq = urlEncodedBody [("status", x)] req'
+    res <- withManager $ \m -> do
+             signedreq <- signOAuth myoauth mycred postReq
+             httpLbs signedreq m
+    case statusCode $ responseStatus res of
+      200       -> return $ Right x
+      otherwise -> return . Left $ "Twitter problems " ++ (read . show $ responseBody res) 
+  where
+    -- Here we override the default error handling -- for the 401 and 403 types we are likely to hit
+    -- we handle them by returning a Left with the error message. There might be other 40X messages
+    -- but they are genuinely unexpected so more like a real error. 403 gets returned on duplicates
+    -- and 401 on unauthed. Twitter often locks accounts it thinks are spammy and it is possible
+    -- we may try to create duplicates.
+    checkStatus' s@(Status sci _) hs c =
+       if sci >= 200 && sci <= 403
+         then Nothing
+         else Just $ toException $ StatusCodeException s hs c
