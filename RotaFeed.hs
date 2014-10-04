@@ -1,8 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module RotaFeed where
 
-import RotaEvaluator
-import RotaParser
 import RotaTweet
 
 import System.Time
@@ -11,12 +9,13 @@ import Text.Atom.Feed.Export
 import qualified Text.Feed.Types as T
 import Text.Feed.Util
 import Text.XML.Light.Output
-import qualified Data.ByteString as B
 
+feed :: IO String
 feed = do
   f <- makeFeed
   return . ppTopElement $ xmlFeed f
 
+feedWithEntryCount :: IO (String,Int)
 feedWithEntryCount = do
   f <- makeFeed
   let ec = length $ feedEntries f
@@ -47,6 +46,7 @@ entryLink = do
                 , linkOther = []
                 })
 
+makeFeed :: IO Feed
 makeFeed = do
   p <- feedAuthor
   d <- feedDate
@@ -68,19 +68,7 @@ makeFeed = do
                 , feedOther = []
                 })
 
-makeTweetFromCmd :: Command -> IO String
-makeTweetFromCmd c = 
-  case c of
-    Command (User u) StatusTD (Job j) -> 
-            return . bsToStr $ strCat ["@",u,": don't forget #todo ", j, "!"]
-    Command (User u) StatusDone (Job j) ->
-            return . bsToStr $ strCat ["Yay! @", u, " just finished ", j, " #done"]
-    Err e ->
-            return . bsToStr $ strCat ["@", adminUser," @", selfUser, " encountered an #error: ", e
-                                      , " -- better investigate"
-                                      ]
-    _ -> return $ "Oh dear, @rotabott hit a very strange error. Better investigate, @ciderpunx"
-
+entries :: IO [Entry]
 entries = do 
   cmds <- getCmds
   es <- mapM (tweetEntry . makeTweetFromCmd) cmds

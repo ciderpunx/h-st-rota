@@ -1,12 +1,14 @@
 module Main where
 import Data.Time
-import Data.Time.Calendar
 import System.Console.GetOpt
 import System.Environment
 import System.Random (newStdGen)
 import System.Random.Shuffle (shuffle')
 
 import RotaDB
+import RotaTweet
+import RotaParser
+import RotaEvaluator
 import RotaPrivateData
 
 -- 1. Regenerate rota
@@ -52,7 +54,7 @@ options =
 myOpts :: [String] -> IO (Options, [String])
 myOpts argv =
   case getOpt Permute options argv of
-    (o,n,[]  ) -> return (foldl (flip id) defaultOptions o, n)
+    (o,n,[]  ) -> return (foldl (flip Prelude.id) defaultOptions o, n)
     (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header options))
   where 
     header = "Usage: rotaDo [mrcn] "
@@ -63,7 +65,9 @@ makeRota = do
     h <- newStdGen
     let ts = zip (cycle $ shuffle' ps (length ps) h) (shuffle' js (length js) g)
     (startDay,endDay) <- thisMonthStartEnd
+    -- consider refactor: make 2 mapM_ into 1
     mapM_ (\t -> addTask Todo {who=fst t,what=snd t,start=startDay,end=endDay} ) ts
+    mapM_ (\t -> makeTweetFromCmd (Command (User (packStr $ fst t)) StatusTD (Job (packStr $ snd t))) >>= addTweet) ts
     return ()
 
 thisMonthStartEnd :: IO (UTCTime,UTCTime)
@@ -71,11 +75,17 @@ thisMonthStartEnd =  do
     now <- getCurrentTime
     timezone <- getCurrentTimeZone
     let zoneNow = utcToLocalTime timezone now
-    let (year, month, _) = toGregorian $ localDay zoneNow
-    let startDay = toTime (show year ++ "-" ++ show month ++ "-01 00:00:00")
-    let lastDOM  = gregorianMonthLength year month
-    let endDay   = toTime (show year ++ "-" ++ show month ++ "-" ++ show lastDOM ++ " 23:59:59")
+        (year, month, _) = toGregorian $ localDay zoneNow
+        startDay = toTime (show year ++ "-" ++ show month ++ "-01 00:00:00")
+        lastDOM  = gregorianMonthLength year month
+        endDay   = toTime (show year ++ "-" ++ show month ++ "-" ++ show lastDOM ++ " 23:59:59")
     return (startDay,endDay)
+
+checkTweets :: IO ()
+checkTweets = do
+  cs <- getCmds
+  mapM_ (makeTweetFromCmd >> print) cs  -- Add each tweet to the tweet queue table in the database rather than printing
+  return ()
 
 main :: IO ()
 main = 
@@ -85,7 +95,7 @@ main =
        else if optSendReminders os
        then putStrLn "send reminders"
        else if optCheckMentions os
-       then putStrLn "check mentions"
+       then checkTweets
        else if optSendNextTweet os
        then putStrLn "send next tweet"
        else error "No options specified [mrcn]"

@@ -7,7 +7,6 @@ import RotaParser
 
 import Network.HTTP.Types.Status
 import Control.Exception.Base
-import Data.ByteString (ByteString)
 import Web.Authenticate.OAuth
 import Network.HTTP.Conduit
 import Data.Aeson
@@ -47,13 +46,13 @@ getLatestMentions = do
   ts <- mentions sinceId
   hClose inh
   case ts of
-    Left err  -> return []
-    Right ts  -> if null ts
+    Left _  -> return []
+    Right ts'  -> if null ts'
                   then return []
                   else do outh <- openFile "rota_lastrun" WriteMode
-                          hPutStrLn outh (show . RotaTweet.id $ head ts)
+                          hPutStrLn outh (show . RotaTweet.id $ head ts')
                           hClose outh
-                          return $ filter (\t -> (screen_name $ user t) /= pack "rotabott") ts 
+                          return $ filter (\t -> (screen_name $ user t) /= pack "rotabott") ts'
 
 getCmds :: IO [Command]
 getCmds = do
@@ -70,8 +69,8 @@ sendTweet x = do
              signedreq <- signOAuth myoauth mycred postReq
              httpLbs signedreq m
     case statusCode $ responseStatus res of
-      200       -> return $ Right x
-      otherwise -> return . Left $ "Twitter problems " ++ (read . show $ responseBody res) 
+      200 -> return $ Right x
+      _   -> return . Left $ "Twitter problems " ++ (read . show $ responseBody res) 
   where
     -- Here we override the default error handling -- for the 401 and 403 types we are likely to hit
     -- we handle them by returning a Left with the error message. There might be other 40X messages
@@ -82,3 +81,16 @@ sendTweet x = do
        if sci >= 200 && sci <= 403
          then Nothing
          else Just $ toException $ StatusCodeException s hs c
+
+makeTweetFromCmd :: Command -> IO String
+makeTweetFromCmd c = 
+  case c of
+    Command (User u) StatusTD (Job j) -> 
+            return . bsToStr $ strCat ["@",u,": don't forget #todo '", j, "'!"]
+    Command (User u) StatusDone (Job j) ->
+            return . bsToStr $ strCat ["Yay! @", u, " just finished '", j, "' #done"]
+    Err e ->
+            return . bsToStr $ strCat ["@", adminUser," @", selfUser, " encountered an #error: ", e
+                                      , " -- better investigate"
+                                      ]
+    _ -> return $ "Oh dear, @rotabott hit a very strange error. Better investigate."

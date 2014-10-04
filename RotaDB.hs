@@ -25,20 +25,38 @@ initDatabase = do
                  " , what  TEXT NOT NULL " ++
                  " , start TEXT NOT NULL " ++
                  " , end   TEXT )") []
+    _ <- run conn ("CREATE TABLE tweets" ++
+                 " ( id    INTEGER PRIMARY KEY ASC " ++
+                 " , text   TEXT NOT NULL )" ) []
     commit conn
     disconnect conn
     return ()
 
+-- TODO this function does not disconnect from the DB. Should be an error. 
+-- I think that the intermediate Todo objects will mean I can do something 
+-- like I do in nextTweet. There should be a better way to do this.
 currentTasksForUser :: String -> IO [[SqlValue]]
-currentTasksForUser user = do
+currentTasksForUser u = do
     -- TODO: check we got a valid user
-    let sql = "SELECT who, what, start, end FROM tasks WHERE who = '" ++ user ++ "'"
-    putStrLn sql
+    let sql = "SELECT who, what, start, end FROM tasks WHERE who = '" ++ u ++ "'"
+    conn <- connectSqlite3 databaseFilePath
+    quickQuery conn sql []
+    -- TODO: construct a Todo per row with data from this query
+
+-- FIFO queue. We don't care about the contents of tweets, just retrieving their text from the DB
+nextTweet :: IO (Maybe String)
+nextTweet = do
+    let sql = "SELECT text FROM tweets ORDER BY id LIMIT 1"
     conn <- connectSqlite3 databaseFilePath
     rows <- quickQuery conn sql []
-    disconnect conn
-    -- TODO: construct a Todo per row with data from this query
-    return rows
+    if length rows == 1
+    then do 
+      let x = fromSql . head $ head rows
+      disconnect conn
+      return $ Just x
+    else do 
+      disconnect conn
+      return Nothing
 
 addTask :: Todo -> IO ()
 addTask t = do
@@ -48,6 +66,14 @@ addTask t = do
              , toSql $ what t
              , toSql $ start t
              , toSql $ end t ]
+    commit conn
+    disconnect conn
+    return ()
+
+addTweet :: String -> IO ()
+addTweet txt = do
+    conn <- connectSqlite3 databaseFilePath
+    _ <- run conn "INSERT INTO tweets (id,text) VALUES (null, ?)" [toSql txt] 
     commit conn
     disconnect conn
     return ()

@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module RotaParser where
 
-import Control.Applicative ((*>))
 import Data.Char (isAlpha, toLower)
 import Data.List (sort)
 import Data.Attoparsec.Char8
@@ -31,6 +30,7 @@ quotey x = x =='"' || x =='\''
 quote :: Parser Char
 quote = satisfy quotey
 
+identifier :: Parser Bst
 identifier = do 
     s <- takeWhile1 (\c -> isAlpha c || isDigit c || c=='_')
     skipSpace
@@ -49,30 +49,30 @@ parseUser :: Parser Tok
 parseUser = do 
      u <- identifier
      let lcU = C.map toLower u
-     if any (==lcU) validUsers
-      then return $ User lcU
-      else if (lcU==selfUser) 
-      then return SelfUser
-      else return $ BadUser lcU
+     return (if lcU `elem` validUsers 
+              then User lcU 
+              else (if lcU == selfUser 
+                    then SelfUser 
+                    else BadUser lcU))
 
 parseStatus :: Parser Tok
 parseStatus = do
     s <- identifier
     case C.map toLower s of 
-      "todo"  -> return $ StatusTD
-      "done"  -> return $ StatusDone
+      "todo"  -> return StatusTD
+      "done"  -> return StatusDone
       _       -> return $ BadStatus s
 
 parseJob :: Parser Tok
 parseJob = do
     j <- takeTill quotey
-    quote
+    _ <- quote
     skipSpace
     return $ Job j
 
 parseIgn :: Parser Tok
 parseIgn = do 
-  takeTill (== ' ')
+  _ <- takeTill (== ' ')
   skipSpace
   return E
 
@@ -84,7 +84,7 @@ parseTok = do
       '#'   -> parseStatus
       '\''  -> parseJob
       '"'   -> parseJob
-      otherwise     -> parseIgn
+      _     -> parseIgn
 
 -- Note: We filter out empty tokens, and sort into order so that we ought to get
 -- something like SelfUser, User, Status, Job for a valid command

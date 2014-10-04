@@ -3,7 +3,6 @@ module RotaEvaluator where
 
 import RotaParser
 
-import Data.Attoparsec.Char8
 import Data.Char 
 import Data.Text.Encoding (encodeUtf8)
 import qualified Data.ByteString as B
@@ -29,10 +28,10 @@ toAST str = do
         -> Err $ strCat ["No mention of self, first user seen: ", u]
       Right ((BadUser u):_:_:_)
         -> Err $ strCat ["No mention of self, in addition first user seen was unknown user: ", u]
-      Right (ts) 
-        -> Err $ strCat ["Syntax error, from tokens: ", (packStr $ show ts)]
-      Left fail  
-        -> Err $ strCat ["Parse error, noparse",(packStr fail)]
+      Right (ts') 
+        -> Err $ strCat ["Syntax error, from tokens: ", (packStr $ show ts')]
+      Left fails  
+        -> Err $ strCat ["Parse error, noparse",(packStr fails)]
   where
     ts = runP str
 
@@ -44,11 +43,17 @@ toBst c = case c of
         -> case status of 
               StatusTD -> todo u j
               StatusDone -> finished u j
+              _  -> error "Bad token for status in toBst"
+    _ 
+        -> error "Unimplemented Command in toBst"
 
 todo, finished :: Tok -> Tok -> Bst
 todo (User user) (Job job) = strCat ["@",user," don't forget to: '",job,"' #todo"]
+todo _ _ = error "Unrecoginzed tokens in todo"
+
 
 finished (User user) (Job job) = strCat ["@",user, " just finished doing: '", job, "' #done"]
+finished _ _ = error "Unrecoginzed tokens in finished"
 
 --------------------------------------------------------------------------------
 -- Library functions, mostly for converting between Text, String and Bst types 
