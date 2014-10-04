@@ -1,8 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module RotaReminder where
 
-import RotaEvaluator
-import RotaParser
 import RotaPrivateData
 
 import Data.List (sort)
@@ -21,15 +19,18 @@ rotaFileToCmds r = undefined
 lineToCmd c = undefined
 
 -- make new rota, returns a list of tuples of user and job
+makeRota :: IO [(String, String)]
 makeRota = do 
     g<-newStdGen
     h<-newStdGen
     return $ zip (cycle $ shuffle' ps (length ps) h) (shuffle' js (length js) g)
 
+makeTextRota :: IO [String]
 makeTextRota = do 
     rs <- makeRota
     return . sort $ map (\x -> fst x ++ ": " ++ snd x) rs
 
+writeRotaFile :: IO ()
 writeRotaFile = do
     rs <- makeTextRota
     outh <- openFile rotaFile WriteMode

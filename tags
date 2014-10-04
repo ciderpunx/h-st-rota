@@ -1,0 +1,113 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_NAME	hasktags
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BadStatus	/mnt/ox4-charlie/rota/RotaParser.hs	/^            | BadStatus Bst$/;"	cons	line:16
+BadUser	/mnt/ox4-charlie/rota/RotaParser.hs	/^            | BadUser Bst$/;"	cons	line:13
+Bst	/mnt/ox4-charlie/rota/RotaParser.hs	/^type Bst    = B.ByteString$/;"	t	line:25
+Command	/mnt/ox4-charlie/rota/RotaParser.hs	/^data Command = Command Tok Tok Tok $/;"	d	line:21
+E	/mnt/ox4-charlie/rota/RotaParser.hs	/^            | E$/;"	cons	line:18
+Err	/mnt/ox4-charlie/rota/RotaParser.hs	/^             | Err Bst$/;"	cons	line:22
+Ignore	/mnt/ox4-charlie/rota/RotaParser.hs	/^type Ignore = String$/;"	t	line:26
+Job	/mnt/ox4-charlie/rota/RotaParser.hs	/^            | Job Bst$/;"	cons	line:17
+Main	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^module Main where$/;"	m	line:1
+Options	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^data Options =$/;"	d	line:29
+RotaDB	/mnt/ox4-charlie/rota/RotaDB.hs	/^module RotaDB where$/;"	m	line:3
+RotaEvaluator	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^module RotaEvaluator where$/;"	m	line:2
+RotaFeed	/mnt/ox4-charlie/rota/RotaFeed.hs	/^module RotaFeed where$/;"	m	line:2
+RotaParser	/mnt/ox4-charlie/rota/RotaParser.hs	/^module RotaParser where$/;"	m	line:2
+RotaPrivateData	/mnt/ox4-charlie/rota/RotaPrivateData.hs	/^module RotaPrivateData where$/;"	m	line:2
+RotaPrivateData	/mnt/ox4-charlie/rota/example-RotaPrivateData.hs	/^module RotaPrivateData where$/;"	m	line:2
+RotaReminder	/mnt/ox4-charlie/rota/RotaReminder.hs	/^module RotaReminder where$/;"	m	line:2
+RotaTweet	/mnt/ox4-charlie/rota/RotaTweet.hs	/^module RotaTweet where$/;"	m	line:2
+SelfUser	/mnt/ox4-charlie/rota/RotaParser.hs	/^data Tok    = SelfUser$/;"	d	line:11
+StatusDone	/mnt/ox4-charlie/rota/RotaParser.hs	/^            | StatusDone$/;"	cons	line:15
+StatusTD	/mnt/ox4-charlie/rota/RotaParser.hs	/^            | StatusTD$/;"	cons	line:14
+Todo	/mnt/ox4-charlie/rota/RotaDB.hs	/^data Todo = Todo { who :: String$/;"	d	line:13
+Tok	/mnt/ox4-charlie/rota/RotaParser.hs	/^data Tok    = SelfUser$/;"	d	line:11
+Tweet	/mnt/ox4-charlie/rota/RotaTweet.hs	/^data Tweet =$/;"	d	line:18
+TwitterUser	/mnt/ox4-charlie/rota/RotaTweet.hs	/^data TwitterUser = TwitterUser {  screen_name :: !Text } deriving (Show, Generic, Eq)$/;"	d	line:25
+User	/mnt/ox4-charlie/rota/RotaParser.hs	/^            | User Bst$/;"	cons	line:12
+addTask	/mnt/ox4-charlie/rota/RotaDB.hs	/^addTask :: Todo -> IO ()$/;"	ft	line:43
+adminUser	/mnt/ox4-charlie/rota/RotaParser.hs	/^adminUser :: Bst$/;"	ft	line:45
+atomFile	/mnt/ox4-charlie/rota/RotaPrivateData.hs	/^atomFile, rotaFile :: String$/;"	ft	line:5
+atomFile	/mnt/ox4-charlie/rota/example-RotaPrivateData.hs	/^atomFile = "\/www\/rota.atom"$/;"	fi	line:6
+bsToStr	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^bsToStr :: Bst -> String$/;"	ft	line:64
+created_at	/mnt/ox4-charlie/rota/RotaTweet.hs	/^        , created_at :: !Text$/;"	c_a	line:20
+currentTasksForUser	/mnt/ox4-charlie/rota/RotaDB.hs	/^currentTasksForUser :: String -> IO [[SqlValue]]$/;"	ft	line:32
+databaseFilePath	/mnt/ox4-charlie/rota/RotaDB.hs	/^databaseFilePath :: String$/;"	ft	line:10
+defaultOptions	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^defaultOptions :: Options$/;"	ft	line:36
+end	/mnt/ox4-charlie/rota/RotaDB.hs	/^                 , end :: UTCTime }$/;"	c_a	line:16
+entries	/mnt/ox4-charlie/rota/RotaFeed.hs	/^entries = do $/;"	fi	line:84
+entryLink	/mnt/ox4-charlie/rota/RotaFeed.hs	/^entryLink :: IO Link$/;"	ft	line:38
+eval	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^eval :: Bst -> Bst$/;"	ft	line:14
+feed	/mnt/ox4-charlie/rota/RotaFeed.hs	/^feed = do$/;"	fi	line:16
+feedAuthor	/mnt/ox4-charlie/rota/RotaFeed.hs	/^feedAuthor :: IO Person$/;"	ft	line:30
+feedDate	/mnt/ox4-charlie/rota/RotaFeed.hs	/^feedDate :: IO String$/;"	ft	line:25
+feedWithEntryCount	/mnt/ox4-charlie/rota/RotaFeed.hs	/^feedWithEntryCount = do$/;"	fi	line:20
+finished	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^todo, finished :: Tok -> Tok -> Bst$/;"	ft	line:48
+getCmds	/mnt/ox4-charlie/rota/RotaTweet.hs	/^getCmds :: IO [Command]$/;"	ft	line:58
+getLatestMentions	/mnt/ox4-charlie/rota/RotaTweet.hs	/^getLatestMentions :: IO [Tweet]$/;"	ft	line:42
+id	/mnt/ox4-charlie/rota/RotaTweet.hs	/^        , id :: !Integer$/;"	c_a	line:21
+identifier	/mnt/ox4-charlie/rota/RotaParser.hs	/^identifier = do $/;"	fi	line:34
+initDatabase	/mnt/ox4-charlie/rota/RotaDB.hs	/^initDatabase :: IO ()$/;"	ft	line:19
+js	/mnt/ox4-charlie/rota/RotaPrivateData.hs	/^ps, js :: [String]$/;"	ft	line:9
+js	/mnt/ox4-charlie/rota/example-RotaPrivateData.hs	/^js = [ "hoovering the stairs" $/;"	fi	line:18
+lineToCmd	/mnt/ox4-charlie/rota/RotaReminder.hs	/^lineToCmd c = undefined$/;"	fi	line:19
+main	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^main :: IO ()$/;"	ft	line:80
+main	/mnt/ox4-charlie/rota/rota.hs	/^main = do $/;"	fi	line:3
+main	/mnt/ox4-charlie/rota/rota_feed.hs	/^main :: IO ()$/;"	ft	line:7
+makeFeed	/mnt/ox4-charlie/rota/RotaFeed.hs	/^makeFeed = do$/;"	fi	line:50
+makeRota	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^makeRota :: IO ()$/;"	ft	line:60
+makeRota	/mnt/ox4-charlie/rota/RotaReminder.hs	/^makeRota :: IO [(String, String)]$/;"	ft	line:22
+makeTextRota	/mnt/ox4-charlie/rota/RotaReminder.hs	/^makeTextRota :: IO [String]$/;"	ft	line:28
+makeTweetFromCmd	/mnt/ox4-charlie/rota/RotaFeed.hs	/^makeTweetFromCmd :: Command -> IO String$/;"	ft	line:71
+mentions	/mnt/ox4-charlie/rota/RotaTweet.hs	/^mentions :: Integer -> IO (Either String [Tweet]) $/;"	ft	line:32
+myOpts	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^myOpts :: [String] -> IO (Options, [String])$/;"	ft	line:52
+mycred	/mnt/ox4-charlie/rota/RotaPrivateData.hs	/^mycred :: Credential$/;"	ft	line:35
+mycred	/mnt/ox4-charlie/rota/example-RotaPrivateData.hs	/^mycred :: Credential$/;"	ft	line:39
+myoauth	/mnt/ox4-charlie/rota/RotaPrivateData.hs	/^myoauth :: OAuth$/;"	ft	line:29
+myoauth	/mnt/ox4-charlie/rota/example-RotaPrivateData.hs	/^myoauth :: OAuth$/;"	ft	line:33
+optCheckMentions	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^            , optCheckMentions :: Bool$/;"	c_a	line:32
+optMkRota	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^    Options { optMkRota :: Bool$/;"	c_a	line:30
+optSendNextTweet	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^            , optSendNextTweet :: Bool$/;"	c_a	line:33
+optSendReminders	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^            , optSendReminders :: Bool$/;"	c_a	line:31
+options	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^options :: [OptDescr (Options -> Options)]$/;"	ft	line:44
+packStr	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^packStr :: String -> Bst$/;"	ft	line:60
+parseIgn	/mnt/ox4-charlie/rota/RotaParser.hs	/^parseIgn :: Parser Tok$/;"	ft	line:73
+parseJob	/mnt/ox4-charlie/rota/RotaParser.hs	/^parseJob :: Parser Tok$/;"	ft	line:66
+parseStatus	/mnt/ox4-charlie/rota/RotaParser.hs	/^parseStatus :: Parser Tok$/;"	ft	line:58
+parseTok	/mnt/ox4-charlie/rota/RotaParser.hs	/^parseTok :: Parser Tok$/;"	ft	line:79
+parseTweet	/mnt/ox4-charlie/rota/RotaParser.hs	/^parseTweet :: Parser [Tok]$/;"	ft	line:91
+parseUser	/mnt/ox4-charlie/rota/RotaParser.hs	/^parseUser :: Parser Tok$/;"	ft	line:48
+ps	/mnt/ox4-charlie/rota/RotaPrivateData.hs	/^ps, js :: [String]$/;"	ft	line:9
+ps	/mnt/ox4-charlie/rota/example-RotaPrivateData.hs	/^ps = [ "@ciderpunx"$/;"	fi	line:12
+quote	/mnt/ox4-charlie/rota/RotaParser.hs	/^quote :: Parser Char$/;"	ft	line:31
+quotey	/mnt/ox4-charlie/rota/RotaParser.hs	/^quotey :: Char -> Bool$/;"	ft	line:28
+rotaFile	/mnt/ox4-charlie/rota/RotaPrivateData.hs	/^atomFile, rotaFile :: String$/;"	ft	line:5
+rotaFile	/mnt/ox4-charlie/rota/example-RotaPrivateData.hs	/^rotaFile = "\/etc\/rota"$/;"	fi	line:9
+rotaFileToCmds	/mnt/ox4-charlie/rota/RotaReminder.hs	/^rotaFileToCmds r = undefined$/;"	fi	line:16
+runP	/mnt/ox4-charlie/rota/RotaParser.hs	/^runP :: Bst -> Either String [Tok]$/;"	ft	line:96
+screen_name	/mnt/ox4-charlie/rota/RotaTweet.hs	/^data TwitterUser = TwitterUser {  screen_name :: !Text } deriving (Show, Generic, Eq)$/;"	c_a	line:25
+selfUser	/mnt/ox4-charlie/rota/RotaParser.hs	/^selfUser :: Bst$/;"	ft	line:42
+sendTweet	/mnt/ox4-charlie/rota/RotaTweet.hs	/^sendTweet :: Bst -> IO (Either String Bst)$/;"	ft	line:64
+start	/mnt/ox4-charlie/rota/RotaDB.hs	/^                 , start :: UTCTime $/;"	c_a	line:15
+strCat	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^strCat :: [Bst] -> Bst$/;"	ft	line:56
+testAddTask	/mnt/ox4-charlie/rota/RotaDB.hs	/^testAddTask :: IO ()$/;"	ft	line:55
+text	/mnt/ox4-charlie/rota/RotaTweet.hs	/^  Tweet { text :: !Text$/;"	c_a	line:19
+thisMonthStartEnd	/mnt/ox4-charlie/rota/RotaCmdLine.hs	/^thisMonthStartEnd :: IO (UTCTime,UTCTime)$/;"	ft	line:69
+toAST	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^toAST :: Bst -> Command$/;"	ft	line:17
+toBst	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^toBst :: Command -> Bst$/;"	ft	line:39
+toTime	/mnt/ox4-charlie/rota/RotaDB.hs	/^toTime :: String -> UTCTime$/;"	ft	line:62
+todo	/mnt/ox4-charlie/rota/RotaEvaluator.hs	/^todo, finished :: Tok -> Tok -> Bst$/;"	ft	line:48
+tweetEntry	/mnt/ox4-charlie/rota/RotaFeed.hs	/^tweetEntry :: IO String -> IO Entry$/;"	ft	line:89
+user	/mnt/ox4-charlie/rota/RotaTweet.hs	/^        , user :: TwitterUser$/;"	c_a	line:22
+validUsers	/mnt/ox4-charlie/rota/RotaParser.hs	/^validUsers :: [Bst]$/;"	ft	line:39
+what	/mnt/ox4-charlie/rota/RotaDB.hs	/^                 , what :: String$/;"	c_a	line:14
+who	/mnt/ox4-charlie/rota/RotaDB.hs	/^data Todo = Todo { who :: String$/;"	c_a	line:13
+writeRotaFile	/mnt/ox4-charlie/rota/RotaReminder.hs	/^writeRotaFile :: IO ()$/;"	ft	line:33

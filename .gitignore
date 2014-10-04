@@ -7,3 +7,4 @@ rota
 rota_feed
 rota.db
 RotaCmdLine
+.fuse*
