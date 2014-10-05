@@ -1,10 +1,6 @@
 {-# LANGUAGE OverloadedStrings, DeriveGeneric #-}
 module RotaTweet where
 
-import RotaPrivateData
-import RotaEvaluator
-import RotaParser
-
 import Network.HTTP.Types.Status
 import Control.Exception.Base
 import Web.Authenticate.OAuth
@@ -13,6 +9,10 @@ import Data.Aeson
 import Data.Text (Text, pack, unpack)
 import GHC.Generics
 import System.IO
+
+import RotaPrivateData
+import RotaEvaluator
+import RotaParser
 
 data Tweet =
   Tweet { text :: !Text
@@ -30,7 +30,7 @@ instance ToJSON TwitterUser
 
 mentions :: Integer -> IO (Either String [Tweet]) 
 mentions sinceId = do
-  req <- parseUrl $ "https://api.twitter.com/1.1/statuses/mentions_timeline.json?contributor_details=1&since_id=" ++ (show sinceId)
+  req <- parseUrl $ "https://api.twitter.com/1.1/statuses/mentions_timeline.json?contributor_details=1&since_id=" ++ show sinceId
   res <- withManager $ \m -> do
            -- OAuth Authentication. 'signOAuth' modifies the HTTP header adding the
            -- appropriate authentication.
@@ -42,7 +42,7 @@ getLatestMentions :: IO [Tweet]
 getLatestMentions = do 
   inh <- openFile "rota_lastrun" ReadMode
   sId <- hGetContents inh
-  let sinceId = (read sId)::Integer
+  let sinceId = read sId::Integer
   ts <- mentions sinceId
   hClose inh
   case ts of
@@ -50,19 +50,18 @@ getLatestMentions = do
     Right ts'  -> if null ts'
                   then return []
                   else do outh <- openFile "rota_lastrun" WriteMode
-                          hPutStrLn outh (show . RotaTweet.id $ head ts')
+                          hPrint outh (RotaTweet.id $ head ts')
                           hClose outh
-                          return $ filter (\t -> (screen_name $ user t) /= pack "rotabott") ts'
+                          return $ filter (\t -> screen_name (user t) /= pack "rotabott") ts'
 
 getCmds :: IO [Command]
 getCmds = do
     ts <- getLatestMentions
-    ts' <- mapM (\t -> return . toAST . packStr . unpack $ text t) ts 
-    return ts'
+    mapM (return . toAST . packStr . unpack . text) ts 
 
 sendTweet :: Bst -> IO (Either String Bst)
 sendTweet x = do 
-    req <- parseUrl $ "https://api.twitter.com/1.1/statuses/update.json" 
+    req <- parseUrl "https://api.twitter.com/1.1/statuses/update.json" 
     let req' = req {checkStatus = checkStatus'}
         postReq = urlEncodedBody [("status", x)] req'
     res <- withManager $ \m -> do
@@ -82,15 +81,5 @@ sendTweet x = do
          then Nothing
          else Just $ toException $ StatusCodeException s hs c
 
-makeTweetFromCmd :: Command -> IO String
-makeTweetFromCmd c = 
-  case c of
-    Command (User u) StatusTD (Job j) -> 
-            return . bsToStr $ strCat ["@",u,": don't forget #todo '", j, "'!"]
-    Command (User u) StatusDone (Job j) ->
-            return . bsToStr $ strCat ["Yay! @", u, " just finished '", j, "' #done"]
-    Err e ->
-            return . bsToStr $ strCat ["@", adminUser," @", selfUser, " encountered an #error: ", e
-                                      , " -- better investigate"
-                                      ]
-    _ -> return $ "Oh dear, @rotabott hit a very strange error. Better investigate."
+makeTweetFromCmd :: Command -> String
+makeTweetFromCmd = bsToStr . toBst

@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Main where
 import Data.Time
 import System.Console.GetOpt
@@ -64,11 +65,13 @@ makeRota = do
     g <- newStdGen
     h <- newStdGen
     let ts = zip (cycle $ shuffle' ps (length ps) h) (shuffle' js (length js) g)
-    (startDay,endDay) <- thisMonthStartEnd
-    -- consider refactor: make 2 mapM_ into 1
-    mapM_ (\t -> addTask Todo {who=fst t,what=snd t,start=startDay,end=endDay} ) ts
-    mapM_ (\t -> makeTweetFromCmd (Command (User (packStr $ fst t)) StatusTD (Job (packStr $ snd t))) >>= addTweet) ts
+    mapM_ addTaskAndTweet ts
     return ()
+  where
+    addTaskAndTweet t = do
+      (startDay,endDay) <- thisMonthStartEnd
+      addTask Todo {who=fst t,what=snd t,start=startDay,end=endDay} 
+      addTweet $ makeTweetFromCmd (Command (User (packStr $ fst t)) StatusTD (Job (packStr $ snd t)))
 
 thisMonthStartEnd :: IO (UTCTime,UTCTime)
 thisMonthStartEnd =  do 

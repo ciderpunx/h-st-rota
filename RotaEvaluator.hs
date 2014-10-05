@@ -14,24 +14,24 @@ eval :: Bst -> Bst
 eval = toBst . toAST
 
 toAST :: Bst -> Command
-toAST str = do
+toAST str = 
     case ts of
-      Right (SelfUser:(User u):StatusTD:(Job j):[])
+      Right (SelfUser:User u:StatusTD:Job j:[])
         -> Command (User u) StatusTD (Job j)
-      Right (SelfUser:(User u):StatusDone:(Job j):[])
+      Right (SelfUser:User u:StatusDone:Job j:[])
         -> Command (User u) StatusDone (Job j)
-      Right (SelfUser:_:(BadStatus b):_)
+      Right (SelfUser:_:BadStatus b:_)
         -> Err $ strCat ["Unknown status: ", b]
-      Right (SelfUser:(BadUser u):_:_)
+      Right (SelfUser:BadUser u:_:_)
         -> Err $ strCat ["Unknown user: ", u]
-      Right ((User u):_:_:_)
+      Right (User u:_:_:_)
         -> Err $ strCat ["No mention of self, first user seen: ", u]
-      Right ((BadUser u):_:_:_)
+      Right (BadUser u:_:_:_)
         -> Err $ strCat ["No mention of self, in addition first user seen was unknown user: ", u]
-      Right (ts') 
-        -> Err $ strCat ["Syntax error, from tokens: ", (packStr $ show ts')]
+      Right ts' 
+        -> Err $ strCat ["Syntax error, from tokens: ", packStr $ show ts']
       Left fails  
-        -> Err $ strCat ["Parse error, noparse",(packStr fails)]
+        -> Err $ strCat ["Parse error, noparse",packStr fails]
   where
     ts = runP str
 
